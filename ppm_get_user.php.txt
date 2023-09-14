@@ -1,0 +1,157 @@
+<?php
+
+    defined( 'ABSPATH' ) or die( 'Not Authorized.' );
+
+	/*
+    Plugin Name: Get User
+    Description: This plugin will authenticate 6 portal users through the use of a shortcode applied in the HOA template.  To configure the plugin: <strong> Settings-->PPM Options</strong>
+    Author: Carole Bacon
+    Version: 0.0.1
+    */
+	
+	function on_success($data)
+	{	
+		return $data;
+		
+	}
+	
+	function on_failure($message)
+	{
+		return $message;
+	}
+	
+	
+	//Add the additional menu items for the plugin.
+	function ppm_plugin_actionlinks( $links ) {
+		$links[] = '<a href="'. esc_url( get_admin_url(null, 'options-general.php?page=PPM+Options') ) .'">Settings</a>';
+		$links[] = '<a href="http://myppmportal.com/" target="_blank">HOA Site</a>';
+		return $links;
+	}
+	add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), 'ppm_plugin_actionlinks' );
+
+	//Import the menu page for the plugin. 
+	function ppm_admin() {
+		include('ppm_get_user_admin.php');
+	}
+
+	//Create the function to add the options page to the menu. ie: add_options_page( string $page_title, string $menu_title, string $capability, string $menu_slug, callable $function = '' )
+	function ppm_admin_actions() {
+		add_options_page("PPM Options", "PPM Options", 1, "PPM Options", "ppm_admin");
+	}
+
+	//Bind the function to the menu
+	add_action('admin_menu', 'ppm_admin_actions');
+
+	//This is our basic sanitize function to clean the post data.
+	function adg_sanitize_data($data) {
+		$data = trim($data);
+		$data = stripslashes($data);
+		$data = htmlspecialchars($data);
+		return $data;
+	}
+
+	function ppm_get_user($attributes) {
+
+
+	//Parse out the attributes passed in through the short code.
+	$adg_raw_input = shortcode_atts( array(        
+        'ppmd_username' => '',
+		'ppmd_password' => '',
+    ), $attributes );
+
+	//Sanitize and assign the values	
+	$ppmd_username = ppmd_sanitize_data($ppmd_raw_input['ppmd_username']);
+	$ppmd_password = ppmd_sanitize_data($ppmd_raw_input['ppmd_password']);
+
+	//Set the private key from our saved options.
+	$ppmd_clientid =  get_option('PPMD_CID');
+	$ppmd_secret = get_option('PPMD_Secret');		
+
+	//Set the Base URL for the target service from our saved options.
+	$serviceURL = get_option('PPMD_Service_Endpoint');
+	
+	
+	/*
+	===============================
+	Request Model:
+	{
+		"UserEmail": null,
+		"UserPassword": null,
+		"PublicKey": null,
+		"PrivateKey": null
+	}
+	===============================
+	*/
+	$data = array(
+	'UserEmail'=>$ppmd_username,
+	'UserPassword'=>$ppmd_password,
+	'PublicKey'=>$ppmd_clientid,
+	'PrivateKey'=>$ppmd_secret
+	);
+			
+	
+	//Encode for JSON formatting.
+	$data_json = json_encode($data);
+
+
+	//Post to the target
+	$ch = curl_init();
+	$options = array(
+		CURLOPT_URL => $serviceURL,
+		CURLOPT_HTTPHEADER => array('Content-Type: application/json;charset=utf-8'),
+		CURLOPT_POST => 1,
+		CURLOPT_POSTFIELDS =>$data_json,
+		CURLOPT_SSL_VERIFYHOST => 1,
+		CURLOPT_SSL_VERIFYPEER => 1,	
+		CURLOPT_RETURNTRANSFER => true,
+		CURLOPT_FOLLOWLOCATION => true,
+		CURLOPT_CONNECTTIMEOUT => 10,
+		CURLOPT_PORT => 443,		
+	);
+	curl_setopt_array( $ch, $options );
+	$response  = curl_exec($ch);
+	
+	$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+	
+	//Send out a notification that the plugin may be misconfigured.
+	if ( $httpCode == 404 )
+	{
+		curl_close($ch);
+		return 'Please check the plugin configuration.  The endpoint configured could not be found.';
+	}
+	if ( $httpCode != 200 )
+	{
+		$errorFull = 'Error: ' . $httpCode . ' error: '.curl_error($ch);
+		curl_close($ch);
+		
+		return $errorFull;
+		//return 'Error: ' . $httpCode;
+		
+	}
+	curl_close($ch);
+	if(!$response  || strlen(trim($response )) == 0)
+	{
+	   return 'Internal Server Configuration Error [032320160335CB]';
+	}
+
+	//Parse the response
+	$json = json_decode($response, true);
+
+	$data = $json['data'];
+	$message = $json['message'];
+	$statusCode = $json['status'];
+
+	//We assume status code 200 is success.
+	if ($statusCode == 200)
+	{	
+	    return on_success($data);
+		exit;		
+	}
+	else
+	{
+		return on_failure($message);
+		exit;	
+	}
+	};
+	add_shortcode( 'PPM_GetUser', 'ppm_get_user' );
+?>

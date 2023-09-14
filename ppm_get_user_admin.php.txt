@@ -1,0 +1,106 @@
+<div class="wrap">   		
+	<?php 	
+	$logoB64 = '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';
+	$src = 'data: image/jpeg;charset=utf-8;base64,'.$logoB64;	
+	echo '<img src="'.$src.'">'	?>
+	<?php    echo "<h2>" . __( 'PPM Authentication Setup', 'ppm_ns' ) . "</h2>"; ?>
+	<?php	
+	if (strtoupper($_SERVER['REQUEST_METHOD']) == 'POST')
+	{
+		
+		
+		if(isset($_POST['PPMD_CID']))
+		{
+			 if(empty($_POST['PPMD_CID'])){
+			?>
+			<div class="updated"><p><strong><?php _e('Value was not saved.  Client id cannot be blank' ); ?></strong></p></div>
+			<?php
+			}
+			else
+			{ 
+			$ppmd_cid = $_POST['PPMD_CID'];
+			update_option('PPMD_CID', $ppmd_cid);
+			?>
+			<div class="updated"><p><strong><?php _e('Client id was saved.' ); ?></strong></p></div>			
+		<?php
+			}
+		}		
+		if(isset($_POST['PPMD_Secret']))
+		{
+			 if(empty($_POST['PPMD_Secret'])){
+			?>
+			<div class="updated"><p><strong><?php _e('Value was not saved.  Client id cannot be blank' ); ?></strong></p></div>
+			<?php
+			}
+			else
+			{ 
+			$ppmd_secret = $_POST['PPMD_Secret'];
+			update_option('PPMD_Secret', $ppmd_secret);
+			?>
+			<div class="updated"><p><strong><?php _e('Client id was saved.' ); ?></strong></p></div>			
+		<?php
+			}
+		}	
+
+		if(isset($_POST['PPMD_Service_Endpoint']))
+		{
+			 if(empty($_POST['PPMD_Service_Endpoint'])){
+			?>
+			<div class="updated"><p><strong><?php _e('Value was not saved.  Endpoint cannot be blank' ); ?></strong></p></div>
+			<?php
+			}
+			else
+			{ 
+			$ppmd_ep = $_POST['PPMD_Service_Endpoint'];
+			update_option('PPMD_Service_Endpoint', $ppmd_ep);
+			?>
+			<div class="updated"><p><strong><?php _e('Endpoint saved.' ); ?></strong></p></div>			
+		<?php
+			}
+		}		
+	}
+	else 
+	{ 
+        $ppmd_cid = get_option('PPMD_CID');	
+		$ppmd_secret = get_option('PPMD_Secret');	
+		$ppmd_ep = get_option('PPMD_Service_Endpoint');
+	}
+	?>	
+	<div>
+	<form name="ppmd_opt_form" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>"> 		
+		
+		<div>
+            <label>Client ID</label><br />
+            <input type="text" name="PPMD_CID" value="<?php echo $ppmd_cid; ?>" size="200">  
+            <span><br /></span>
+		</div>		
+		<div>
+            <label>Secret Key</label><br />
+            <input type="text" name="PPMD_Secret" value="<?php echo $ppmd_secret; ?>" size="200">  
+            <span><br /></span>
+		</div>
+		<div>
+            <label>PPM Service Endpoint</label><br />
+            <input type="text" name="PPMD_Service_Endpoint" value="<?php echo $ppmd_ep; ?>" size="200">  
+            <span><br /></span>
+		</div>		 
+        <p class="submit">
+        <input type="submit" name="Submit" value="<?php _e('Update Settings', 'ppm_ns' ) ?>" />
+        </p>
+    </form>	
+	</div>
+	<hr />  
+	<div>	
+	<h2>How to use the "Get User" plugin:</h2>
+	<span><b>Shortcode Properties:</b> <br/><br/>	
+	<i>ppmd_username:</i> User's registered email address <br/>
+	<i>ppmd_password:</i> Password associated with user account <br/><br/>
+	<b>Example:</b>
+	</span>	
+	<pre>
+	<font color="green">//If successful the user will be redirected else the result object will contain an error message.</font>
+	<?php echo htmlspecialchars('$ppmd_result = do_shortcode(\'[PPM_GetUser  ppmd_username="\'.$postvalue_username.\'" ppmd_password="\'.$postvalue_password.\'"]\');');?>	
+	echo $ppmd_result;
+	</pre>	
+	</div>	
+</div>
